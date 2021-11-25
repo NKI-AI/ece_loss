@@ -6,10 +6,22 @@ Exclusive Cross-Entropy Loss
         :alt: PyPI - Latest release
         :target: https://pypi.python.org/pypi/ece_loss
 
-.. image:: https://img.shields.io/github/license/NKI-AI/ece_loss.svg
-        :alt: GitHub - Repository license
+.. image:: https://img.shields.io/badge/License-Apache_2.0-blue.svg
+        :alt: Apache 2.0 License
         :target: https://github.com/NKI-AI/ece_loss/blob/main/LICENSE
-
+        
+.. image:: https://github.com/NKI-AI/ece_loss/actions/workflows/tox.yml/badge.svg
+        :alt: Tox
+        :target: https://github.com/NKI-AI/ece_loss/actions/workflows/tox.yml
+        
+.. image:: https://github.com/NKI-AI/ece_loss/actions/workflows/black.yml/badge.svg
+        :alt: black
+        :target: https://github.com/NKI-AI/ece_loss/actions/workflows/black.yml
+        
+.. image:: https://github.com/NKI-AI/ece_loss/actions/workflows/mypy.yml/badge.svg
+        :alt: mypy
+        :target: https://github.com/NKI-AI/ece_loss/actions/workflows/mypy.yml
+        
 A `PyTorch <http://pytorch.org/>`__ implementation of the Exclusive Cross Entropy Loss.
 
 * Free software: `Apache 2.0 license <https://github.com/NKI-AI/ece_loss/blob/main/LICENSE>`__ (please cite our work if you use it)
