@@ -23,6 +23,7 @@ setup(
     author="Jonas Teuwen",
     author_email="j.teuwen@nki.nl",
     long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/x-rst",
     python_requires=">=3.8",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
