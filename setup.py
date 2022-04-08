@@ -34,7 +34,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    install_requires=["torch~=1.9.0", "setuptools~=58.0.4"],
+    install_requires=["torch>=1.9.0", "setuptools>=58.0.4"],
     extras_require={
         "dev": ["numpy~=1.21.2", "pytest", "pylint", "black", "isort", "tox"],
         "example": ["pillow~=8.4.0", "matplotlib~=3.4.3"],
