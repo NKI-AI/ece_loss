@@ -2,16 +2,18 @@
 # Copyright (c) Andreas Panteli, Jonas Teuwen
 """Loss module for the Exclusive Cross Entropy."""
 import math
-from typing import Any, Callable, Optional, Union, Tuple, Type
+from typing import Any, Callable, Optional, Tuple, Type, Union
 
 import torch
 from torch import Tensor
 from torch.nn import BCELoss, BCEWithLogitsLoss, CrossEntropyLoss
 
+
 class SigmoidAnnealing:
     """
     Implements sigmoid annealing given a checkpoint (for the turning point - middle) and temperature (speed of change)
     """
+
     def __init__(self, epoch_checkpoint: int, temperature: float) -> None:
         self.epoch_checkpoint = epoch_checkpoint
         self.temperature = temperature
@@ -25,11 +27,13 @@ class SigmoidAnnealing:
         """Annealing centred around epoch_checkpoint with a decline rate depending on temperature"""
         return self.sigmoid((epoch - self.epoch_checkpoint) / self.temperature) * threshold
 
+
 class FocalWeighing:
     """
     Implements a focal reweighing for loss based on the prediction confidence.
     Assumes loss is pass is defined at it's output as -log(prediction)
     """
+
     def __init__(self, alpha: float, gamma: float) -> None:
         self.alpha = alpha
         self.gamma = gamma
@@ -37,34 +41,6 @@ class FocalWeighing:
     def __call__(self, loss: Tensor) -> Tensor:
         loss_p = torch.exp(-loss)
         return self.alpha * ((1.0 - loss_p) ** self.gamma) * loss
-
-# def get_sigmoid_annealing_function(epoch_checkpoint: int, temperature: float) -> Callable:
-#     """
-#     Implements sigmoid annealing given a checkpoint (for the turning point - middle) and temperature (speed of change)
-#     """
-#
-#     def _sigmoid(data):
-#         """Ordinary sigmoid function"""
-#         return 1 / (1 + math.exp(-data))
-#
-#     def _annealing(epoch: int, threshold: float) -> float:
-#         """Annealing centred around epoch_checkpoint with a decline rate depending on temperature"""
-#         return _sigmoid((epoch - epoch_checkpoint) / temperature) * threshold
-#
-#     return _annealing
-
-
-# def get_focal_weighing_function(focal_loss_alpha: float, focal_loss_gamma: float) -> Callable:
-#     """
-#     Implements a focal reweighing for loss based on the prediction confidence.
-#     Assumes loss is pass is defined at it's output as -log(prediction)
-#     """
-#
-#     def _focal_weighing(loss: Tensor) -> Tensor:
-#         loss_p = torch.exp(-loss)
-#         return focal_loss_alpha * ((1.0 - loss_p) ** focal_loss_gamma) * loss
-#
-#     return _focal_weighing
 
 
 class ExclusiveLoss:  # pylint: disable=R0902
