@@ -7,6 +7,7 @@ import ast
 
 from setuptools import find_packages, setup  # type: ignore
 
+
 with open("ece_loss/__init__.py", "r", encoding="utf-8") as f:
     for line in f:
         if line.startswith("__version__"):
@@ -36,8 +37,8 @@ setup(
     ],
     install_requires=["torch>=1.9.0", "setuptools>=58.0.4"],
     extras_require={
-        "dev": ["numpy~=1.21.2", "pytest", "pylint", "black", "isort", "tox"],
-        "example": ["pillow~=8.4.0", "matplotlib~=3.4.3"],
+        "dev": ["numpy>=1.21.2", "pytest", "pylint", "black", "isort", "tox"],
+        "example": ["pillow>=8.4.0", "matplotlib>=3.4.3"],
     },
     license="Apache Software License 2.0",
     include_package_data=True,

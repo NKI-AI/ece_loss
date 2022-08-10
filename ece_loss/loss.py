@@ -8,34 +8,63 @@ import torch
 from torch import Tensor
 from torch.nn import BCELoss, BCEWithLogitsLoss, CrossEntropyLoss
 
-
-def get_sigmoid_annealing_function(epoch_checkpoint: int, temperature: float) -> Callable:
+class SigmoidAnnealing:
     """
     Implements sigmoid annealing given a checkpoint (for the turning point - middle) and temperature (speed of change)
     """
+    def __init__(self, epoch_checkpoint: int, temperature: float) -> None:
+        self.epoch_checkpoint = epoch_checkpoint
+        self.temperature = temperature
 
-    def _sigmoid(data):
+    @staticmethod
+    def sigmoid(x: float) -> float:
         """Ordinary sigmoid function"""
-        return 1 / (1 + math.exp(-data))
+        return 1 / (1 + math.exp(-x))
 
-    def _annealing(epoch: int, threshold: float) -> float:
+    def __call__(self, epoch: int, threshold: float) -> float:
         """Annealing centred around epoch_checkpoint with a decline rate depending on temperature"""
-        return _sigmoid((epoch - epoch_checkpoint) / temperature) * threshold
+        return self.sigmoid((epoch - self.epoch_checkpoint) / self.temperature) * threshold
 
-    return _annealing
-
-
-def get_focal_weighing_function(focal_loss_alpha: float, focal_loss_gamma: float) -> Callable:
+class FocalWeighing:
     """
     Implements a focal reweighing for loss based on the prediction confidence.
     Assumes loss is pass is defined at it's output as -log(prediction)
     """
+    def __init__(self, alpha: float, gamma: float) -> None:
+        self.alpha = alpha
+        self.gamma = gamma
 
-    def _focal_weighing(loss: Tensor) -> Tensor:
+    def __call__(self, loss: Tensor) -> Tensor:
         loss_p = torch.exp(-loss)
-        return focal_loss_alpha * ((1.0 - loss_p) ** focal_loss_gamma) * loss
+        return self.alpha * ((1.0 - loss_p) ** self.gamma) * loss
 
-    return _focal_weighing
+# def get_sigmoid_annealing_function(epoch_checkpoint: int, temperature: float) -> Callable:
+#     """
+#     Implements sigmoid annealing given a checkpoint (for the turning point - middle) and temperature (speed of change)
+#     """
+#
+#     def _sigmoid(data):
+#         """Ordinary sigmoid function"""
+#         return 1 / (1 + math.exp(-data))
+#
+#     def _annealing(epoch: int, threshold: float) -> float:
+#         """Annealing centred around epoch_checkpoint with a decline rate depending on temperature"""
+#         return _sigmoid((epoch - epoch_checkpoint) / temperature) * threshold
+#
+#     return _annealing
+
+
+# def get_focal_weighing_function(focal_loss_alpha: float, focal_loss_gamma: float) -> Callable:
+#     """
+#     Implements a focal reweighing for loss based on the prediction confidence.
+#     Assumes loss is pass is defined at it's output as -log(prediction)
+#     """
+#
+#     def _focal_weighing(loss: Tensor) -> Tensor:
+#         loss_p = torch.exp(-loss)
+#         return focal_loss_alpha * ((1.0 - loss_p) ** focal_loss_gamma) * loss
+#
+#     return _focal_weighing
 
 
 class ExclusiveLoss:  # pylint: disable=R0902
@@ -61,8 +90,8 @@ class ExclusiveLoss:  # pylint: disable=R0902
         confidence_estimator: Callable,
         exclusivity_threshold: float = 0.5,
         background_sampling_threshold: float = 0.5,
-        exclusivity_threshold_annealing: Callable = get_sigmoid_annealing_function(50, 10),
-        background_sampling_annealing: Callable = get_sigmoid_annealing_function(150, 10),
+        exclusivity_threshold_annealing: Callable = SigmoidAnnealing(50, 10),
+        background_sampling_annealing: Callable = SigmoidAnnealing(150, 10),
         focal_loss_parameters: Tuple[float, float] = (0.2, 0.1),
         epoch: int = 0,
     ) -> None:
@@ -78,7 +107,7 @@ class ExclusiveLoss:  # pylint: disable=R0902
         self.epoch = epoch
         self.unannotated_mapping = self.all_labels_as_unannotated
 
-        self.focal_loss = get_focal_weighing_function(self.focal_loss_alpha, self.focal_loss_gamma)
+        self.focal_loss = FocalWeighing(self.focal_loss_alpha, self.focal_loss_gamma)
 
     def set_epoch(self, epoch: int) -> None:
         """Set the epoch at the current state of training for use in the annealing functions"""

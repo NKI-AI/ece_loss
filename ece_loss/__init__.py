@@ -3,4 +3,4 @@
 """Exclusive Cross Entropy Module."""
 from .loss import BECELoss, BECEWithLogitsLoss, ExclusiveCrossEntropyLoss
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
