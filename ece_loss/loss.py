@@ -71,7 +71,6 @@ class ExclusiveLoss:  # pylint: disable=R0902
         focal_loss_parameters: Tuple[float, float] = (0.2, 0.1),
         epoch: int = 0,
     ) -> None:
-        # super(ExclusiveLoss, self).__init__()
         self.baseloss = baseloss
         self.target_dtype = target_dtype
         self.confidence_estimator = confidence_estimator
